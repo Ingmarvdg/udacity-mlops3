@@ -1,4 +1,6 @@
 from ..census_model.train_model import load_data, save_model, load_model
+
+import pandas as pd
 import pytest
 import os
 from sklearn.linear_model import LinearRegression
@@ -22,7 +24,7 @@ def dummy_model():
 def test_load_data(test_data):
     train_x, test_x, _, _ = load_data(test_data, test_size=0.4)
 
-    assert len(train_x.columns) == 6
+    assert len(train_x.columns) == 8
     assert len(train_x.columns) == len(test_x.columns)
 
 def test_save_model(resources, dummy_model):

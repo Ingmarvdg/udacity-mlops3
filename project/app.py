@@ -6,7 +6,8 @@ from project.census_model.train_model import load_model
 
 class Person(BaseModel):
     age: int
-    fnlgt: int
+    race: str
+    workclass: str
     education_num: int
     capital_gain: int
     capital_loss: int
@@ -17,7 +18,8 @@ class Person(BaseModel):
             "examples": [
                 {
                     "age": 27,
-                    "fnlgt": 123580,
+                    "race": "White",
+                    "workclass": "Private",
                     "education_num": 8,
                     "capital_gain": 0,
                     "capital_loss": 100,
@@ -26,16 +28,6 @@ class Person(BaseModel):
             ]
         }
     }
-
-    def get_array(self):
-        return [
-            self.age,
-            self.fnlgt,
-            self.education_num,
-            self.capital_gain,
-            self.capital_loss,
-            self.hours_per_week
-        ]
 
 API_PROJECT_NAME="census_dummy_model"
 

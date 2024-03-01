@@ -22,7 +22,8 @@ def test_index(client: TestClient) -> None:
 def test_make_prediction_single(client: TestClient) -> None:
     example = {
                     "age": 27,
-                    "fnlgt": 123580,
+                    "race": "White",
+                    "workclass": "Private",
                     "education_num": 8,
                     "capital_gain": 0,
                     "capital_loss": 100,

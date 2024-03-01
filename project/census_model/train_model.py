@@ -4,25 +4,51 @@ from sklearn.linear_model import LogisticRegression
 from sklearn import metrics
 import os
 import pickle
+from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder
+from sklearn.pipeline import Pipeline
 
 # load data
 def load_data(data_path, test_size=0.2):
+    useful_columns = ["age", "race","workclass", "education-num", "capital-gain","capital-loss","hours-per-week", "salary"]
+
     df = pd.read_csv(data_path)
+
+    df = df[useful_columns]
+
     df["50kplus"] = df["salary"] == ">50K"
     df["50kplus"] = df["50kplus"].astype(int)
 
-    x = df.select_dtypes(include='number')
+    y = df.pop("50kplus")
 
-    y = x.pop("50kplus")
+    return train_test_split(df, y, test_size=test_size)
 
-    return train_test_split(x, y, test_size=0.2)
+def get_inference_pipeline():
+    # Let's handle the categorical features first
+    ordinal_categorical = ["workclass"]
+    non_ordinal_categorical = ["race"]
+    ordinal_categorical_preproc = OrdinalEncoder()
 
-def get_trained_model(x_train, y_train):
+    non_ordinal_categorical_preproc = Pipeline([
+        ("encode", OneHotEncoder())
+        ])
+
+    # Let's put everything together
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ("ordinal_cat", ordinal_categorical_preproc, ordinal_categorical),
+            ("non_ordinal_cat", non_ordinal_categorical_preproc, non_ordinal_categorical),
+        ],
+        remainder="drop",  # This drops the columns that we do not transform
+    )
     model = LogisticRegression()
 
-    model.fit(x_train, y_train)
+    sk_pipe = Pipeline([
+        ("preprocessing", preprocessor), 
+        ("inference", model)])
 
-    return model
+    return sk_pipe
 
 def save_model(model, path, name):
     with open(os.path.join(path, name), "wb") as file:
@@ -40,32 +66,40 @@ def model_inference(model, sample):
 def score_model(model, x_test, y_test):
     predictions = model.predict(x_test)
 
-    f1_score = metrics.f1_score(predictions, y_test)
+    actual = y_test.values
+
+    f1_score = metrics.f1_score(predictions, actual)
     
     return f1_score
 
-def score_model_slices(model, x_test, y_test) -> dict:
-    scores = {}
-    for c in [0, 1]:
-        mask = y_test==c
-        x = x_test[mask]
-        y = y_test[mask]
+def score_model_slices(model, x_test, y_test, slice_column) -> dict:
+    # get predictions and add to column
+    y_pred = model.predict(x_test)
+    y_pred = pd.DataFrame(y_pred, columns=["predictions"])
 
-        scores[c] = score_model(model, x, y)
+    full_df = pd.concat([x_test.reset_index(drop=True), 
+                         y_test.reset_index(drop=True), 
+                         y_pred.reset_index(drop=True)
+                         ], axis=1)
+    
 
-    return scores
+    agg_df = full_df.groupby(slice_column).apply(lambda x: metrics.f1_score(x["predictions"], x["50kplus"]))
+
+    return agg_df
 
 if __name__ == "__main__":
     x_train, x_test, y_train, y_test = load_data("../data/census.csv")
-    print(x_train.shape, y_train.shape, x_test.shape, y_test.shape)
 
-    model = get_trained_model(x_train, y_train)
+    print(x_train.columns)
+    pipe = get_inference_pipeline()
+
+    pipe = pipe.fit(x_train, y_train)
 
     # evaluate model
-    f1_score = score_model(model, x_test, y_test)
+    f1_score = score_model(pipe, x_test, y_test)
     print(f"Got score {f1_score}")
 
-    f1_score_slices = score_model_slices(model, x_test, y_test)
+    f1_score_slices = score_model_slices(pipe, x_test, y_test, "race")
     print(f"Got scores {f1_score_slices} for both slices.")
     # save model
-    save_model(model, "../model", "basic_model.pkl")
+    save_model(pipe, "../model", "basic_model.pkl")
