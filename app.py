@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from contextlib import asynccontextmanager
 import pandas as pd
-from project.census_model.train_model import load_model
+from src.census_model.train_model import load_model
 
 class Person(BaseModel):
     age: int
