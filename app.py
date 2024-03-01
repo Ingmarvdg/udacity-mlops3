@@ -36,7 +36,7 @@ ml_models = {}
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Load the ML model
-    ml_models["census_model"] = load_model("project/model", "basic_model.pkl")
+    ml_models["census_model"] = load_model("src/model", "basic_model.pkl")
     yield
     # Clean up the ML models and release the resources
     ml_models.clear()

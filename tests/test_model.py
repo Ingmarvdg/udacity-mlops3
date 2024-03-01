@@ -1,4 +1,4 @@
-from ..census_model.train_model import load_data, save_model, load_model
+from src.census_model.train_model import load_data, save_model, load_model
 
 import pandas as pd
 import pytest
@@ -7,15 +7,15 @@ from sklearn.linear_model import LinearRegression
 
 @pytest.fixture
 def test_data():
-    return "project/data/census.csv"
+    return "src/data/census.csv"
 
 @pytest.fixture
 def resources():
-    return "project/tests/resources"
+    return "tests/resources"
 
 @pytest.fixture
 def model_artifact():
-    return "project/tests/resources/model.pkl"
+    return "tests/resources/model.pkl"
 
 @pytest.fixture
 def dummy_model():
