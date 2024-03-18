@@ -1,31 +1,15 @@
-from src.census_model.train_model import load_data, save_model, load_model
-
-import pandas as pd
-import pytest
+from components.model import save_model, load_model
 import os
-from sklearn.linear_model import LinearRegression
+from app import app
+from fastapi.testclient import TestClient
+import pytest
 
-@pytest.fixture
-def test_data():
-    return "src/data/census.csv"
-
-@pytest.fixture
-def resources():
-    return "tests/resources"
-
-@pytest.fixture
-def model_artifact():
-    return "tests/resources/model.pkl"
-
-@pytest.fixture
-def dummy_model():
-    return LinearRegression()
-
-def test_load_data(test_data):
-    train_x, test_x, _, _ = load_data(test_data, test_size=0.4)
-
-    assert len(train_x.columns) == 8
-    assert len(train_x.columns) == len(test_x.columns)
+@pytest.fixture()
+def client():
+    """FastAPI test client."""
+    with TestClient(app) as _client:
+        yield _client
+        app.dependency_overrides = {}
 
 def test_save_model(resources, dummy_model):
     new_name = "model2.pkl"

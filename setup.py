@@ -1,8 +1,8 @@
 import setuptools
 
 setuptools.setup(
-    name="starter",
-    version="0.0.0",
-    description="Starter code.",
-    author="Student",
+    name="salary_estimation",
+    version="0.0.1",
+    description="This is an example model for the estimation of a persons salary",
+    author="Ingmarvdg@gmail.com",
 )
