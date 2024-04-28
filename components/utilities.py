@@ -2,7 +2,6 @@ from pydantic import BaseModel
 
 class Person(BaseModel):
     age: int
-    race: str
     workclass: str
     education_num: int
     occupation: str
@@ -25,3 +24,6 @@ class Person(BaseModel):
             ]
         }
     }
+
+class TrainConfig(BaseModel):
+    train_split: float

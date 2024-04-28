@@ -8,7 +8,9 @@ from sklearn.base import BaseEstimator
 import pickle
 import os
 
-def get_model_pipeline(model: BaseEstimator, param_grid: dict = None) -> Pipeline:
+from typing import Optional
+
+def get_model_pipeline(model: BaseEstimator, param_grid: Optional[dict] = None) -> Pipeline:
     """ Generate the model pipeline to be used for training and inference.
 
     If param_grid is provided the model is turned into a gridsearch, during

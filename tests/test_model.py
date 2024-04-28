@@ -1,15 +1,5 @@
 from components.model import save_model, load_model
 import os
-from app import app
-from fastapi.testclient import TestClient
-import pytest
-
-@pytest.fixture()
-def client():
-    """FastAPI test client."""
-    with TestClient(app) as _client:
-        yield _client
-        app.dependency_overrides = {}
 
 def test_save_model(resources, dummy_model):
     new_name = "model2.pkl"

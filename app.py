@@ -6,8 +6,8 @@ from contextlib import asynccontextmanager
 import pandas as pd
 
 API_PROJECT_NAME="census_dummy_model"
-MODEL_FOLDER = "src/model"
-DATA_PATH = "../data/census.csv"
+MODEL_FOLDER = "model"
+DATA_PATH = "./data/census.csv"
 TEST_DATA_PATH = "../data/test_census.csv"
 
 ml_models = {}
@@ -31,7 +31,7 @@ async def root():
 async def inference(item: utilities.Person) -> dict[str,int]:
     df = pd.DataFrame([dict(item)])
     df.columns = df.columns.str.replace("_", "-")
-    r = ml_models["census_model"].predict(df)
+    r = ml_models["census_model"].predict([dict(item)])
     return {"result": r[0]}
 
 @app.post("/fairness")
@@ -57,9 +57,9 @@ async def fairness(column: str) -> dict[str, float]:
     
     return f1_score_slices
 
-@app.post("/training")
-async def train(train_split: float) -> dict[str, int]:
-    x_train, x_test, y_train, y_test = dataloader.load_trainval_data(DATA_PATH)
+@app.post("/train")
+async def train(train_config: utilities.TrainConfig) -> None:
+    x_train, x_test, y_train, y_test = dataloader.load_trainval_data(DATA_PATH, train_config.train_split)
     # grid search for random forests
     param_grid = { 
         'n_estimators': [200, 500],
@@ -70,9 +70,9 @@ async def train(train_split: float) -> dict[str, int]:
 
     x_train, x_test, y_train, y_test = dataloader.load_trainval_data(DATA_PATH)
 
-    model = RandomForestClassifier(random_state=42)
+    clf = RandomForestClassifier(random_state=42)
 
-    pipe = model.get_model_pipeline(model, param_grid)
+    pipe = model.get_model_pipeline(clf, param_grid)
 
     pipe = pipe.fit(x_train, y_train)
 
@@ -82,5 +82,3 @@ async def train(train_split: float) -> dict[str, int]:
 
     # save model
     model.save_model(pipe, "../model", "basic_model.pkl")
-
-    return f1_score
