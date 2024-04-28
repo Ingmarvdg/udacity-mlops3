@@ -4,12 +4,10 @@ from app import app
 import pytest
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def client():
     """FastAPI test client."""
-    with TestClient(app) as _client:
-        yield _client
-        app.dependency_overrides = {}
+    return TestClient(app)
 
 
 def test_index(client: TestClient) -> None:

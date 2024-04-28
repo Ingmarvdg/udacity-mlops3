@@ -81,4 +81,4 @@ async def train(train_config: utilities.TrainConfig) -> None:
     print(f"Got score {f1_score}")
 
     # save model
-    model.save_model(pipe, "../model", "basic_model.pkl")
+    model.save_model(pipe, "/model", "basic_model.pkl")

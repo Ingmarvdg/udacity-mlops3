@@ -9,6 +9,7 @@ import pickle
 import os
 
 from typing import Optional
+from pathlib import Path
 
 def get_model_pipeline(model: BaseEstimator, param_grid: Optional[dict] = None) -> Pipeline:
     """ Generate the model pipeline to be used for training and inference.
@@ -67,6 +68,9 @@ def save_model(model: BaseEstimator, path: str, name: str) -> None:
     name : str
         The filename.
     """
+
+    Path(path).mkdir(parents=True, exist_ok=True) # create the folder if it doesnt exist.
+
     with open(os.path.join(path, name), "wb") as file:
         pickle.dump(model, file)
 
