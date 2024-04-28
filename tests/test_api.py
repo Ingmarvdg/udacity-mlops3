@@ -1,7 +1,6 @@
 import json
 from fastapi.testclient import TestClient
 from app import app
-from fastapi.testclient import TestClient
 import pytest
 
 
@@ -46,7 +45,7 @@ def test_make_prediction_single(client: TestClient) -> None:
     }
 
     data = json.dumps(example)
-    r = client.post("/inference", content=data)
+    r = client.post("/inference", content=data, timeout=5)
 
     assert r.status_code == 200
     assert r.json()["result"] is not None
