@@ -24,7 +24,7 @@ async def inference(item: utilities.Person) -> dict[str,int]:
 
     clf = model.load_model(MODEL_FOLDER, "basic_model.pkl")
 
-    r = clf.predict([dict(item)])
+    r = clf.predict(df)
     return {"result": r[0]}
 
 @app.post("/fairness")
