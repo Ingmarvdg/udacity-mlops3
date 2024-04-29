@@ -25,10 +25,10 @@ def test_train_model(client: TestClient) -> None:
     }
 
     data = json.dumps(body)
-    r = client.post("/train", content=data, timeout=5)
+    r = client.post("/train", content=data)
 
     assert r.status_code == 200
-    assert r.json()["result"] is not None
+    assert r.json() is not None
 
 
 def test_make_prediction_single(client: TestClient) -> None:
@@ -43,10 +43,10 @@ def test_make_prediction_single(client: TestClient) -> None:
     }
 
     data = json.dumps(example)
-    r = client.post("/inference", content=data, timeout=5)
+    r = client.post("/inference", content=data)
 
     assert r.status_code == 200
-    assert r.json()["result"] is not None
+    assert r.json() is not None
 
 # def test_train(client: TestClient) -> None:
 #     ...

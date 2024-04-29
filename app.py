@@ -18,7 +18,7 @@ async def lifespan(app: FastAPI):
     ml_models["census_model"] = model.load_model(MODEL_FOLDER, "basic_model.pkl")
     yield
     # Clean up the ML models and release the resources
-    ml_models.clear()
+    # ml_models.clear()
 
 # FastAPI app
 app = FastAPI(title=API_PROJECT_NAME, lifespan=lifespan)
