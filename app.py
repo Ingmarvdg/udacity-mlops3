@@ -10,18 +10,8 @@ MODEL_FOLDER = "model"
 DATA_PATH = "./data/census.csv"
 TEST_DATA_PATH = "../data/test_census.csv"
 
-ml_models = {}
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Load the ML model
-    ml_models["census_model"] = model.load_model(MODEL_FOLDER, "basic_model.pkl")
-    yield
-    # Clean up the ML models and release the resources
-    # ml_models.clear()
-
 # FastAPI app
-app = FastAPI(title=API_PROJECT_NAME, lifespan=lifespan)
+app = FastAPI(title=API_PROJECT_NAME)
 
 @app.get("/")
 async def root():
@@ -31,7 +21,10 @@ async def root():
 async def inference(item: utilities.Person) -> dict[str,int]:
     df = pd.DataFrame([dict(item)])
     df.columns = df.columns.str.replace("_", "-")
-    r = ml_models["census_model"].predict([dict(item)])
+
+    clf = model.load_model(MODEL_FOLDER, "basic_model.pkl")
+
+    r = clf.predict([dict(item)])
     return {"result": r[0]}
 
 @app.post("/fairness")
@@ -49,11 +42,11 @@ async def fairness(column: str) -> dict[str, float]:
         The scores for each unique value in given input column.
     """
 
-    model = ml_models["census_model"]
+    clf = model.load_model(MODEL_FOLDER, "basic_model.pkl")
 
     x_test, y_test = dataloader.load_test_data(TEST_DATA_PATH)
 
-    f1_score_slices = scoring.score_model_slices(model, x_test, y_test, column)
+    f1_score_slices = scoring.score_model_slices(clf, x_test, y_test, column)
     
     return f1_score_slices
 
