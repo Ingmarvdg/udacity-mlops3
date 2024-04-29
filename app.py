@@ -58,7 +58,7 @@ async def fairness(column: str) -> dict[str, float]:
     return f1_score_slices
 
 @app.post("/train")
-async def train(train_config: utilities.TrainConfig) -> None:
+async def train(train_config: utilities.TrainConfig) -> dict[str, float]:
     x_train, x_test, y_train, y_test = dataloader.load_trainval_data(DATA_PATH, train_config.train_split)
     # grid search for random forests
     param_grid = { 
@@ -82,3 +82,5 @@ async def train(train_config: utilities.TrainConfig) -> None:
 
     # save model
     model.save_model(pipe, "./model", "basic_model.pkl")
+
+    return {"f1": f1_score}

@@ -19,18 +19,6 @@ def test_index(client: TestClient) -> None:
     assert r.status_code == 200
     assert r.json()["message"] == index_string
 
-def test_train_model(client: TestClient) -> None:
-    body = {
-        "train_split": 0.2
-    }
-
-    data = json.dumps(body)
-    r = client.post("/train", content=data)
-
-    assert r.status_code == 200
-    assert r.json() is not None
-
-
 def test_make_prediction_single(client: TestClient) -> None:
     example = {
         "age": 27,
@@ -48,5 +36,13 @@ def test_make_prediction_single(client: TestClient) -> None:
     assert r.status_code == 200
     assert r.json() is not None
 
-# def test_train(client: TestClient) -> None:
-#     ...
+def test_train_model(client: TestClient) -> None:
+    body = {
+        "train_split": 0.2
+    }
+
+    data = json.dumps(body)
+    r = client.post("/train", content=data)
+
+    assert r.status_code == 200
+    assert "f1" in dict(r.json()).keys()
