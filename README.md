@@ -24,5 +24,31 @@ For deployment run:
 
 in the root directory.
 
+## API usage
+The API has three endpoints:
+
+### /metrics
+Returns the metrics of the model on the test set.
+
+### /inference
+Run inference on a single sample using the model.
+``` 
+example_body = {
+                    "age": 27,
+                    "workclass": "Private",
+                    "education_num": 8,
+                    "occupation": "Exec-managerial",
+                    "capital_gain": 0,
+                    "capital_loss": 100,
+                    "hours_per_week": 12,
+                }
+```
+
+### /fairness
+Check fairness of all values in a provided column using the model.
+```
+example_body = {"column": "occupation"}
+```
+
 ## Model information
 For the model card see model_card.md in the src/model directory.
