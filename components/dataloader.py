@@ -14,7 +14,7 @@ USEFUL_COLUMNS = [
 ]
 
 
-def preprocess_input_data(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+def preprocess_input_data(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.Series]:
     """Preprocess input data.
 
     Parameters
