@@ -6,7 +6,7 @@ import pandas as pd
 API_PROJECT_NAME = "census_dummy_model"
 MODEL_FOLDER = "model"
 DATA_PATH = "./data/census.csv"
-TEST_DATA_PATH = "../data/test_census.csv"
+TEST_DATA_PATH = "./data/test_census.csv"
 
 # FastAPI app
 app = FastAPI(title=API_PROJECT_NAME)
