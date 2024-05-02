@@ -71,7 +71,7 @@ def score_model_slices(
     agg_df = (
         full_df.groupby(slice_column)
         .apply(lambda x: metrics.f1_score(x["predictions"], x["50kplus"]))
-        .asdict()
+        .to_dict()
     )
 
     return agg_df
