@@ -46,3 +46,15 @@ def test_train_model(client: TestClient) -> None:
 
     assert r.status_code == 200
     assert "f1" in dict(r.json()).keys()
+
+def test_fairness(client: TestClient) -> None:
+    body = {
+        "column": "occupation"
+    }
+
+    data = json.dumps(body)
+
+    r = client.post("/fairness", content=data)
+
+    assert r.status_code == 200
+    assert "occupation" in dict(r.json()).keys()
