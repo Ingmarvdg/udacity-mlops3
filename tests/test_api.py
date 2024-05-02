@@ -49,9 +49,29 @@ def test_get_metrics(client: TestClient) -> None:
 def test_fairness(client: TestClient) -> None:
     body = {"column": "occupation"}
 
+    occupation_options = [
+        'Adm-clerical', 
+        'Craft-repair', 
+        'Exec-managerial', 
+        'Farming-fishing', 
+        'Handlers-cleaners', 
+        'Other-service', 
+        'Priv-house-serv', 
+        'Prof-specialty', 
+        'Protective-serv', 
+        'Sales', 
+        'Tech-support', 
+        'Transport-moving'
+    ]
+
     data = json.dumps(body)
 
     r = client.post("/fairness", content=data)
 
     assert r.status_code == 200
-    assert "occupation" in dict(r.json()).keys()
+
+    response_keys = dict(r.json()).keys()
+
+    for option in occupation_options:
+        assert option in response_keys
+
