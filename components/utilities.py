@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class Person(BaseModel):
     age: int
     workclass: str
@@ -19,11 +20,14 @@ class Person(BaseModel):
                     "occupation": "Exec-managerial",
                     "capital_gain": 0,
                     "capital_loss": 100,
-                    "hours_per_week": 12
+                    "hours_per_week": 12,
                 }
             ]
         }
     }
 
-class TrainConfig(BaseModel):
-    train_split: float
+
+class FairnessConfig(BaseModel):
+    column: str
+
+    model_config = {"json_schema_extra": {"examples": [{"column": "occupation"}]}}  # noqa: E501

@@ -11,8 +11,11 @@ import os
 from typing import Optional
 from pathlib import Path
 
-def get_model_pipeline(model: BaseEstimator, param_grid: Optional[dict] = None) -> Pipeline:
-    """ Generate the model pipeline to be used for training and inference.
+
+def get_model_pipeline(
+    model: BaseEstimator, param_grid: Optional[dict] = None
+) -> Pipeline:
+    """Generate the model pipeline to be used for training and inference.
 
     If param_grid is provided the model is turned into a gridsearch, during
     training it will use 5-fold cross validation to try out all parameters.
@@ -34,15 +37,17 @@ def get_model_pipeline(model: BaseEstimator, param_grid: Optional[dict] = None) 
     non_ordinal_categorical = ["occupation"]
     ordinal_categorical_preproc = OrdinalEncoder()
 
-    non_ordinal_categorical_preproc = Pipeline([
-        ("encode", OneHotEncoder())
-        ])
+    non_ordinal_categorical_preproc = Pipeline([("encode", OneHotEncoder())])
 
     # Let's put everything together
     preprocessor = ColumnTransformer(
         transformers=[
             ("ordinal_cat", ordinal_categorical_preproc, ordinal_categorical),
-            ("non_ordinal_cat", non_ordinal_categorical_preproc, non_ordinal_categorical),
+            (
+                "non_ordinal_cat",
+                non_ordinal_categorical_preproc,
+                non_ordinal_categorical,
+            ),
         ],
         remainder="drop",  # This drops the columns that we do not transform
     )
@@ -50,14 +55,13 @@ def get_model_pipeline(model: BaseEstimator, param_grid: Optional[dict] = None) 
     if param_grid:
         model = GridSearchCV(model, param_grid=param_grid, cv=5, refit=True)
 
-    sk_pipe = Pipeline([
-        ("preprocessing", preprocessor), 
-        ("inference", model)])
-    
+    sk_pipe = Pipeline([("preprocessing", preprocessor), ("inference", model)])
+
     return sk_pipe
 
+
 def save_model(model: BaseEstimator, path: str, name: str) -> None:
-    """ Save model as pickle to given file location.
+    """Save model as pickle to given file location.
 
     Parameters
     ----------
@@ -69,13 +73,16 @@ def save_model(model: BaseEstimator, path: str, name: str) -> None:
         The filename.
     """
 
-    Path(path).mkdir(parents=True, exist_ok=True) # create the folder if it doesnt exist.
+    Path(path).mkdir(
+        parents=True, exist_ok=True
+    )  # create the folder if it doesnt exist.
 
     with open(os.path.join(path, name), "wb") as file:
         pickle.dump(model, file)
 
+
 def load_model(path: str, name: str) -> BaseEstimator:
-    """ Load model from file.
+    """Load model from file.
 
     Parameters
     ----------

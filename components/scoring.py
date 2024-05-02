@@ -2,7 +2,10 @@ from sklearn import metrics
 from sklearn.base import BaseEstimator
 import pandas as pd
 
-def score_model(model: BaseEstimator, x_test: pd.DataFrame, y_test: pd.DataFrame) -> float:
+
+def score_model(
+    model: BaseEstimator, x_test: pd.DataFrame, y_test: pd.DataFrame
+) -> float:
     """Return the performance of a model on the provided test dataset.
 
     Currently performance is only based on the F1-score.
@@ -27,11 +30,14 @@ def score_model(model: BaseEstimator, x_test: pd.DataFrame, y_test: pd.DataFrame
     actual = y_test.values
 
     f1_score = metrics.f1_score(predictions, actual)
-    
+
     return f1_score
 
-def score_model_slices(model: BaseEstimator, x_test: pd.DataFrame, y_test: pd.DataFrame, slice_column: str) -> dict:
-    """ Get the score for each value "slice" in a given column.
+
+def score_model_slices(
+    model: BaseEstimator, x_test: pd.DataFrame, y_test: pd.DataFrame, slice_column: str  # noqa: E501
+) -> dict:
+    """Get the score for each value "slice" in a given column.
 
     Parameters
     ----------
@@ -53,12 +59,19 @@ def score_model_slices(model: BaseEstimator, x_test: pd.DataFrame, y_test: pd.Da
     y_pred = model.predict(x_test)
     y_pred = pd.DataFrame(y_pred, columns=["predictions"])
 
-    full_df = pd.concat([x_test.reset_index(drop=True), 
-                         y_test.reset_index(drop=True), 
-                         y_pred.reset_index(drop=True)
-                         ], axis=1)
-    
+    full_df = pd.concat(
+        [
+            x_test.reset_index(drop=True),
+            y_test.reset_index(drop=True),
+            y_pred.reset_index(drop=True),
+        ],
+        axis=1,
+    )
 
-    agg_df = full_df.groupby(slice_column).apply(lambda x: metrics.f1_score(x["predictions"], x["50kplus"])).asdict()
+    agg_df = (
+        full_df.groupby(slice_column)
+        .apply(lambda x: metrics.f1_score(x["predictions"], x["50kplus"]))
+        .asdict()
+    )
 
     return agg_df
